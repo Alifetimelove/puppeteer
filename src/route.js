@@ -4,7 +4,7 @@ const httpFun = require("./httpFun").httpFun;
 module.exports = (app) => {
   app.post("/api/getShareImg", (req, res) => {
     new httpFun()
-      .writeAFile(req.body.svgStyle, "svg1.xml")
+      .writeAFile(req.body.svgStyle, "svg.xml")
       .then((result) => {
         console.log(result);
         getImg(req.body)
