@@ -4,7 +4,7 @@ let path = require("path");
 const fs = require("fs");
 
 const waitTime = (n) => new Promise((r) => setTimeout(r, n));
-module.exports = async (opt) => {
+module.exports = async (opt, fileUrl) => {
   try {
     const browser = await puppeteer.launch({
       args: [
@@ -25,8 +25,7 @@ module.exports = async (opt) => {
     });
 
     const page = await browser.newPage();
-    const url = path.resolve("./src/svgxml/svg.xml");
-    console.log(url);
+    const url = path.resolve(fileUrl);
     await page.goto("file:///" + url);
     await page.setViewport({
       width: opt.width,
