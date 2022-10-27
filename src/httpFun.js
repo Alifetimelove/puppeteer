@@ -12,48 +12,64 @@ const qrCode = require("qrcode");
 let httpFun = function () {};
 httpFun.prototype.replaceSvg = function (data) {
   return new Promise(function (resolve, reject) {
-    var svgValue = JSON.parse(data.svgValue);
+    var svgValue = data.svgValue;
     var svgStyle = data.svgStyle;
     var i = [];
     svgValue.forEach((element) => {
       if (element.type == "barcode") {
-        var canvas = createCanvas();
-        JsBarcode(canvas, element.value, {
-          displayValue: false,
-          height: element.imageWidth,
-          width: 1,
-        });
-        element.value = canvas.toDataURL();
-        svgStyle = svgStyle.replace("${" + element.key + "}", element.value);
-        i.push(element.key);
-        if (i.length === svgValue.length) {
-          resolve(svgStyle);
+        if (element.value) {
+          var canvas = createCanvas();
+          JsBarcode(canvas, element.value, {
+            displayValue: false,
+            height: element.imageWidth,
+            width: 1,
+          });
+          element.value = canvas.toDataURL();
+          svgStyle = svgStyle.replace("${" + element.key + "}", element.value);
+          i.push(element.key);
+          if (i.length === svgValue.length) {
+            resolve(svgStyle);
+          }
+        } else {
+          svgStyle = svgStyle.replace("${" + element.key + "}", "");
+          i.push(element.key);
+          if (i.length === svgValue.length) {
+            resolve(svgStyle);
+          }
         }
       } else if (element.type == "qrcode") {
-        qrCode.toDataURL(
-          element.value,
-          {
-            type: "image/png",
-            width: element.imageWidth,
-            color: {
-              dark: "#000000",
-              light: "#ffffff",
+        if (element.value) {
+          qrCode.toDataURL(
+            element.value,
+            {
+              type: "image/png",
+              width: element.imageWidth,
+              color: {
+                dark: "#000000",
+                light: "#ffffff",
+              },
+              errorCorrectionLevel: "M",
+              quality: 1,
             },
-            errorCorrectionLevel: "M",
-            quality: 1,
-          },
-          function (err, url) {
-            element.value = url;
-            svgStyle = svgStyle.replace(
-              "${" + element.key + "}",
-              element.value
-            );
-            i.push(element.key);
-            if (i.length === svgValue.length) {
-              resolve(svgStyle);
+            function (err, url) {
+              element.value = url;
+              svgStyle = svgStyle.replace(
+                "${" + element.key + "}",
+                element.value
+              );
+              i.push(element.key);
+              if (i.length === svgValue.length) {
+                resolve(svgStyle);
+              }
             }
+          );
+        } else {
+          svgStyle = svgStyle.replace("${" + element.key + "}", "");
+          i.push(element.key);
+          if (i.length === svgValue.length) {
+            resolve(svgStyle);
           }
-        );
+        }
       } else {
         svgStyle = svgStyle.replace("${" + element.key + "}", element.value);
         i.push(element.key);
@@ -80,7 +96,7 @@ httpFun.prototype.writeAFile = function (data, fileName) {
             });
           } else {
             // 写入文件成功
-            // console.log("写入文件成功");
+            console.log("写入文件成功");
             err = {
               code: "success",
             };
