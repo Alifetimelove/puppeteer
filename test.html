@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+  </head>
+
+  <body>
+    <img style="width: 10%" src="" id="img" alt="" />
+    <script>
+      var obj = {
+        storeId: "1583697048448434177",
+        merchantId: "1583697048369377280",
+        width: 960,
+        color: 3001,
+        svgStyle:
+          '<svg width="960" height="640"  xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n <g>\n  <title>Layer 1</title>\n  <g id="svg_1">\n   <templateName>123456</templateName>\n   <templateNo/>\n   <scenarioId>1583697048398737408</scenarioId>\n   <templateTypeId>4</templateTypeId>\n  </g>\n  <image barcodeFormat="CODE_128" class="field_2" y2="140" x2="126" y1="102" x1="219" xlink:href="${field_2}" id="svg_2" height="100" width="217" y="141" x="127"/>\n  <image class="field_5" y2="369" x2="192" y1="55" x1="55" xlink:href="${field_5}" id="svg_3" height="53" width="53" y="370" x="193"/>\n  <text y2="138.5" x2="419" y1="39.5" x1="126" height="33.5" width="120" bg-color-opacity="1" stroke-color-opacity="1" xml:space="preserve" text-anchor="middle" font-family="微软雅黑" font-size="24" id="svg_4" y="167" x="482" dproportion-down="0" dproportion-up="0" decimal-allowed="0" strokes-width="0" stroke-width="0" bg-color="null" stroke-color="#ffffff" stroke="#000000" fill="#000000">\n   <tspan y2="138.5" x2="419" y1="39.5" x1="126" y="167" x="482" id="svg_6">商品价格：</tspan>\n  </text>\n  <text class="field_6" y2="139.5" x2="519.01172" y1="39.5" x1="101.97656" height="33.5" width="95.97656" bg-color-opacity="1" stroke-color-opacity="1" xml:space="preserve" text-anchor="middle" font-family="微软雅黑" font-size="24" id="svg_5" y="168" x="570" dproportion-down="0" dproportion-up="0" decimal-allowed="0" strokes-width="0" stroke-width="0" bg-color="null" stroke-color="#ffffff" stroke="#000000" fill="#000000">\n   <tspan y2="139.5" x2="531" y1="39.5" x1="78" y="168" x="570" id="svg_7">${field_6}</tspan>\n  </text>\n </g>\n</svg>',
+        svgValue: [
+          {
+            prefix: "",
+            format: "",
+            srcKey: "field_6",
+            keepDecimalPlaces: 2,
+            type: "number",
+            suffix: "",
+            isDisplayThousands: 1,
+            isDisplayPercentage: 0,
+            isCustom: 0,
+            value: "20000",
+            key: "field_6",
+          },
+          {
+            imageWidth: "217",
+            format: "",
+            srcKey: "field_2",
+            type: "barcode",
+            imageHeight: "100",
+            isDisplayThousands: 0,
+            isDisplayPercentage: 0,
+            isCustom: 0,
+            value: "123456789012",
+            key: "field_2",
+            barcodeEncode: "",
+          },
+          {
+            imageWidth: "53",
+            format: "",
+            srcKey: "field_5",
+            type: "qrcode",
+            imageHeight: "53",
+            isDisplayThousands: 0,
+            isDisplayPercentage: 0,
+            isCustom: 0,
+            value: "http://www.blozi.com.cn",
+            key: "field_5",
+            barcodeEncode: "",
+          },
+        ],
+        height: 640,
+      };
+      // var obj = {
+      //   width: 200,
+      //   height: 200,
+      //   storeId: "1231",
+      //   merchantId: "ddd",
+      //   list: [
+      //     {
+      //       url: "http://101.132.129.104:8011/res/storeImg/1578766939803901952/1578766939828432898/20221022/8b9c7aee0b56446cb8621f3463cd2e49.png",
+      //       width: "83",
+      //       height: "33",
+      //       x: "110",
+      //       y: "144",
+      //     },
+      //     {
+      //       url: "http://101.132.129.104:8011/res/storeImg/1578766939803901952/1578766939828432898/20221022/8b9c7aee0b56446cb8621f3463cd2e49.png",
+      //       width: "97",
+      //       height: "50",
+      //       x: "0",
+      //       y: "141",
+      //     },
+      //   ],
+      // };
+      $.ajax({
+        method: "post",
+        url: "http://192.168.10.8:7000/api/getShareImg",
+        headers: {
+          "content-type": "application/json",
+        },
+        type: "JSON",
+        data: JSON.stringify(obj),
+        success: (res) => {
+          console.log(res);
+          $("#img").attr("src", res.data);
+        },
+      });
+    </script>
+  </body>
+</html>

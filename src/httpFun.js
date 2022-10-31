@@ -8,6 +8,7 @@ const JsBarcode = require("jsbarcode");
 const { createCanvas } = require("canvas");
 const qrCode = require("qrcode");
 let numberProcess = require("./common").numberProcess;
+let http = require("http");
 let httpFun = function () {};
 httpFun.prototype.replaceSvg = function (data) {
   return new Promise(function (resolve, reject) {
@@ -199,7 +200,6 @@ httpFun.prototype.writeAFile = function (data, fileName) {
 httpFun.prototype.uploadImage = function (data, absolutePath, relativePath) {
   return new Promise(function (resolve, reject) {
     const svg = data.svg;
-
     function decodeBase64Image(dataString) {
       var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
         response = {};
@@ -208,46 +208,46 @@ httpFun.prototype.uploadImage = function (data, absolutePath, relativePath) {
       }
       response.type = matches[1];
       response.data = new Buffer.from(matches[2], "base64");
-      return response;
+      return response.data;
     }
     var imageBuffer = decodeBase64Image(svg);
-    var current_time = moment(Date.now()).format("YYYY-MM-DD");
-    var uuid = uuidv4();
-    var filePath =
-      absolutePath +
-      data.merchantId +
-      "/" +
-      data.storeId +
-      "/" +
-      current_time +
-      "/";
-    var _path = filePath + uuid + ".png";
-    fs.mkdir(filePath, { recursive: true }, (err) => {
-      if (err) {
-        resolve(err);
-      } else {
-        fs.writeFile(_path, imageBuffer.data, function (err) {
-          if (err) {
-            // 写入文件失败
-            console.log("写入文件失败:", err);
-          } else {
-            var newPath =
-              relativePath +
-              data.merchantId +
-              "/" +
-              data.storeId +
-              "/" +
-              current_time +
-              "/" +
-              uuid +
-              ".png";
-            resolve({
-              url: newPath,
-            });
-          }
-        });
-      }
+    var base64Content = imageBuffer.toString("base64");
+    const options = {
+      host: configInfo.host,
+      port: configInfo.port,
+      path: configInfo.path,
+      method: configInfo.method,
+    };
+    // // 发送请求，监听响应
+    const req = http.request(options, (response) => {
+      console.log(response.statusCode);
+      console.log(response.headers);
+      response.setEncoding("utf-8");
+      var str = "";
+      response.on("data", (chunk) => {
+        str += chunk;
+      });
+      response.on("end", function () {
+        var result = JSON.parse(str);
+        console.log(result);
+        if (result.state && result.data) {
+          resolve(result.data.filePath);
+        } else {
+          reject(result.message);
+        }
+      });
     });
+    req.setHeader("Content-Type", "application/json");
+    req.write(
+      JSON.stringify({
+        color: data.color,
+        merchantId: data.merchantId,
+        storeId: data.storeId,
+        suffix: "png",
+        base64Content: base64Content,
+      })
+    );
+    req.end();
   });
 };
 httpFun.prototype.compositePictureToSvg = function (data) {

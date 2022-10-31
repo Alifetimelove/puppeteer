@@ -16,17 +16,14 @@ module.exports = (app) => {
                   svg: file,
                   storeId: req.body.storeId,
                   merchantId: req.body.merchantId,
+                  color: req.body.color,
                 };
                 new httpFun()
-                  .uploadImage(
-                    param,
-                    configInfo.absolutePath,
-                    configInfo.relativePath
-                  )
+                  .uploadImage(param)
                   .then((resultOne) => {
                     res.json({
                       code: 1,
-                      data: resultOne.url,
+                      data: resultOne,
                       msg: "",
                     });
                   })
@@ -85,15 +82,11 @@ module.exports = (app) => {
                   merchantId: req.body.merchantId,
                 };
                 new httpFun()
-                  .uploadImage(
-                    param,
-                    configInfo.compositePictureToSvgAbsolutePath,
-                    configInfo.compositePictureToSvgRelativePath
-                  )
+                  .uploadImage(param)
                   .then((resultOne) => {
                     res.json({
                       code: 1,
-                      data: resultOne.url,
+                      data: resultOne,
                       msg: "",
                     });
                   })

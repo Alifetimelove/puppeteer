@@ -26,7 +26,9 @@ module.exports = async (opt, fileUrl) => {
 
     const page = await browser.newPage();
     const url = path.resolve(fileUrl);
-    await page.goto("file:///" + url);
+    await page.goto("file:///" + url, {
+      timeout: 0,
+    });
     await page.setViewport({
       width: opt.width,
       height: opt.height,
